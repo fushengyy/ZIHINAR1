@@ -1,0 +1,87 @@
+---
+output: github_document
+---
+
+<!--  README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  fig.width=6, 
+  fig.height=4
+)
+```
+
+The First-order Integer-valued Autoregressive (INAR(1)) model with 
+zero-inflated (ZI-INAR(1)) and hurdle (H-INAR(1)) innovations is widely 
+used in studying integer-valued time-series data, such as crime count and 
+heatwave frequency. This work implemented the INAR(1) models in Stan.
+
+## Installation
+
+You can install ZIHINAR1 from GitHub with:
+
+```r
+remotes::install_github("fushengyy/ZIHINAR1")
+```
+
+\[Available Soon\] Or you can install the released version of
+HeckmanStan from [CRAN](https://CRAN.R-project.org) with:
+
+```r
+install.packages("ZIHINAR1")
+```
+
+## Basic Features get_stanfit()
+
+The package contains main function named get_stanfit().
+
+```r
+stan_fit <- get_stanfit(mod_type, distri, y, n_pred = 4,
+                        thin = 2, chains = 1, iter = 2000, warmup = iter/2,
+                        seed = NA)
+```
+
+- mod_type: Character string indicating the model type.
+  Use "zi" for zero-inflated models and "h" for hurdle models.
+
+- distri: Character string specifying the distribution.
+  Options are "poi" for Poisson or "nb" for Negative Binomial.
+
+- y: A numeric vector of integers representing the observed data.
+
+- n_pred: Integer specifying the number of time points for future predictions
+  (default is 4).
+
+- thin: Integer indicating the thinning interval for Stan sampling 
+  (default is 2).
+
+- chains: Integer specifying the number of Markov chains to run (default is 1).
+
+- iter: Integer specifying the total number of iterations per chain
+  (default is 2000).
+
+- warmup: Integer specifying the number of warmup iterations per chain
+  (default is iter/2).
+
+- seed: Numeric seed for reproducibility (default is NA).
+
+## Example
+
+The following are examples showing how to fit the INAR(1) model when data 
+is generated from a zero-inflated Negative Binomial (ZINB) distribution.
+
+```{r example1, out.width = '70%',  fig.align = "center", message=FALSE, warning=FALSE}
+library(ZIHINAR1)
+y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5, 2), 
+                    mod_type = "zi", distri = "nb")
+stan_fit <- get_stanfit(mod_type = "zi", distri = "nb", y = y_data, n_pred = 5, 
+                        iter = 2000, chains = 1, warmup = 500, 
+                        thin = 2, seed = 42)
+get_est(distri = "nb", stan_fit = stan_fit)
+get_mod_sel(y = y_data, mod_type = "zi", distri = "nb", stan_fit = stan_fit)
+get_pred(stan_fit = stan_fit)
+```

@@ -8,7 +8,8 @@
 #' @examples
 #' \dontrun{
 #'   # Generate simulated data
-#'   y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5), mod_type = "zi", distri = "poi")
+#'   y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+#'                       mod_type = "zi", distri = "poi")
 #'
 #'   # Fit the model using Stan
 #'   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)
@@ -29,7 +30,8 @@ get_pred <- function(stan_fit) {
   install_if_missing("gridExtra")
 
   if (!inherits(stan_fit, "stanfit")) {
-    stop("The parameter 'stan_fit' must be a valid 'stanfit' object returned by Stan.")
+    stop("The parameter 'stan_fit' must be a valid 'stanfit' object
+         returned by Stan.")
   }
 
   y_pred <- data.frame(rstan::extract(stan_fit, pars = "y_pred"))
@@ -42,7 +44,8 @@ get_pred <- function(stan_fit) {
     Max = apply(y_pred, 2, max)
   )
 
-  print(knitr::kable(y_pred_summary, format = "simple", digits = 2))
+  print(knitr::kable(y_pred_summary, format = "simple", digits = 2,
+                     caption = "Summary of Predictions"))
 
   num_cols <- ncol(y_pred)
   plot_list <- list()
@@ -52,9 +55,11 @@ get_pred <- function(stan_fit) {
     colnames(column_data) <- c("Value", "Frequency")
 
     # Create the bar plot
-    p <- ggplot2::ggplot(column_data, aes(x = as.factor(Value), y = Frequency)) +
+    p <- ggplot2::ggplot(column_data, aes(x = as.factor(Value),
+                                          y = Frequency)) +
       geom_bar(stat = "identity", fill = "steelblue") +
       theme_minimal() +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       labs(
         title = paste("Bar Chart for Prediction", i),
         x = "Predicted Value",

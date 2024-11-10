@@ -18,7 +18,8 @@ Extracts predicted values from a Stan model fit.
 \examples{
 \dontrun{
   # Generate simulated data
-  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5), mod_type = "zi", distri = "poi")
+  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+                      mod_type = "zi", distri = "poi")
 
   # Fit the model using Stan
   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)

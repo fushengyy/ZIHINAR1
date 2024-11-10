@@ -17,23 +17,29 @@ get_stanfit(
 )
 }
 \arguments{
-\item{mod_type}{Character string indicating the model type. Use "zi" for zero-inflated
+\item{mod_type}{Character string indicating the model type.
+Use "zi" for zero-inflated
 models and "h" for hurdle models.}
 
-\item{distri}{Character string specifying the distribution. Options are "poi" for Poisson
-or "nb" for Negative Binomial.}
+\item{distri}{Character string specifying the distribution.
+Options are "poi" for Poisson or "nb" for Negative Binomial.}
 
 \item{y}{A numeric vector of integers representing the observed data.}
 
-\item{n_pred}{Integer specifying the number of time points for future predictions (default is 4).}
+\item{n_pred}{Integer specifying the number of time points for future
+predictions (default is 4).}
 
-\item{thin}{Integer indicating the thinning interval for Stan sampling (default is 2).}
+\item{thin}{Integer indicating the thinning interval for Stan sampling
+(default is 2).}
 
-\item{chains}{Integer specifying the number of Markov chains to run (default is 1).}
+\item{chains}{Integer specifying the number of Markov chains to run
+(default is 1).}
 
-\item{iter}{Integer specifying the total number of iterations per chain (default is 2000).}
+\item{iter}{Integer specifying the total number of iterations per chain
+(default is 2000).}
 
-\item{warmup}{Integer specifying the number of warmup iterations per chain (default is \code{iter/2}).}
+\item{warmup}{Integer specifying the number of warmup iterations per chain
+(default is \code{iter/2}).}
 
 \item{seed}{Numeric seed for reproducibility (default is NA).}
 }
@@ -41,13 +47,14 @@ or "nb" for Negative Binomial.}
 A \code{stanfit} object containing the Stan model fit.
 }
 \description{
-This function fits a Zero-Inflated INAR(1) (ZI-INAR(1)) or Hurdle INAR(1) (H-INAR(1)) model
-using Stan and returns the model fit.
+This function fits a Zero-Inflated INAR(1) (ZI-INAR(1)) or Hurdle INAR(1)
+(H-INAR(1)) model using Stan and returns the model fit.
 }
 \examples{
 \dontrun{
   # Generate simulated data
-  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5), mod_type = "zi", distri = "poi")
+  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+                      mod_type = "zi", distri = "poi")
 
   # Fit the model using Stan
   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)

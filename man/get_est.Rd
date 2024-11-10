@@ -7,20 +7,23 @@
 get_est(distri, stan_fit)
 }
 \arguments{
-\item{distri}{Character string specifying the distribution. Options are "poi" or "nb".}
+\item{distri}{Character string specifying the distribution. Options
+are "poi" or "nb".}
 
 \item{stan_fit}{A \code{stanfit} object returned by \code{get_stanfit}.}
 }
 \value{
-A summary of the parameter estimates, including HPD intervals.
+A summary of the parameter estimates.
 }
 \description{
-Extracts parameter estimates from a Stan model fit, including mean, median, standard deviation, and HPD intervals.
+Extracts parameter estimates from a Stan model fit, including mean, median,
+standard deviation, and HPD intervals.
 }
 \examples{
 \dontrun{
   # Generate simulated data
-  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5), mod_type = "zi", distri = "poi")
+  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+                      mod_type = "zi", distri = "poi")
 
   # Fit the model using Stan
   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)
