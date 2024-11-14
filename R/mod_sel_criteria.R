@@ -190,8 +190,9 @@ mod_sel_criteria <- function(y, mod_type, distri, stanfit) {
   logphat = sum(get_loglik(y, alpha = alpha.hat, rho = rho.hat,
                            theta = theta.hat, mod_type, distri))
   ll = data.frame(extract(stanfit, pars = "ll"))
-  pdic=2*(logphat - mean(ll[,1]))
-  dic = -2*logphat + 2*pdic
+  Dbar = -2 * mean(ll[,1])
+  Dhat = -2 * logphat
+  dic = 2 * Dbar - Dhat
 
   lik = data.frame(extract(stanfit, pars = "lik"))
   loglik = data.frame(extract(stanfit, pars = "log_lik"))
