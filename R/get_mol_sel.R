@@ -33,14 +33,11 @@
 #'               stan_fit = stan_fit)
 #' }
 #'
+#' @import rstan
 #' @import knitr
 #' @import matrixStats
 #' @export
 get_mod_sel <- function(y, mod_type, distri, stan_fit) {
-
-  install_if_missing("rstan")
-  install_if_missing("knitr")
-  install_if_missing("matrixStats")
 
   if (!is.numeric(y) || any(y != as.integer(y))) {
     stop("The parameter 'y' must be a numeric vector of integers.

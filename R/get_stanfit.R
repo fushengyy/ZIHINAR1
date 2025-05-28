@@ -40,8 +40,6 @@ get_stanfit <- function(mod_type, distri, y, n_pred = 4,
                         thin = 2, chains = 1, iter = 2000, warmup = iter/2,
                         seed = NA) {
 
-  install_if_missing("rstan")
-
   if (!is.numeric(y) || any(y != as.integer(y))) {
     stop("The parameter 'y' must be a numeric vector of integers.
          Please provide valid integer values.")

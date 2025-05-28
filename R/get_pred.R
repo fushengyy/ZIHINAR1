@@ -18,16 +18,17 @@
 #'   get_pred(stan_fit = stan_fit)
 #' }
 #'
-#' @importFrom ggplot2 ggplot aes geom_bar theme_minimal labs
+#' @import rstan
+#' @importFrom ggplot2 ggplot aes geom_bar theme_minimal labs theme element_text
 #' @importFrom gridExtra grid.arrange
-#' @import knitr
+#' @importFrom knitr kable
+#' @importFrom stats median IQR
+#' @importFrom utils globalVariables
 #' @export
-get_pred <- function(stan_fit) {
 
-  install_if_missing("rstan")
-  install_if_missing("ggplot2")
-  install_if_missing("knitr")
-  install_if_missing("gridExtra")
+
+
+get_pred <- function(stan_fit) {
 
   if (!inherits(stan_fit, "stanfit")) {
     stop("The parameter 'stan_fit' must be a valid 'stanfit' object
@@ -54,7 +55,6 @@ get_pred <- function(stan_fit) {
     column_data <- as.data.frame(table(y_pred[, i]))
     colnames(column_data) <- c("Value", "Frequency")
 
-    # Create the bar plot
     p <- ggplot2::ggplot(column_data, aes(x = as.factor(Value),
                                           y = Frequency)) +
       geom_bar(stat = "identity", fill = "steelblue") +

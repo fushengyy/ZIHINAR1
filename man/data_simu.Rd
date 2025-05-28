@@ -67,7 +67,7 @@ R package version 0.1.0. Available at:
 Garay, A. M., Ribeiro, J. V. (2021). First-Order Integer Valued AR Processes
 with Zero-Inflated Innovations.
 In: \emph{Nonstationary Systems: Theory and Applications}, Springer.
-DOI: \url{https://doi.org/10.1007/978-3-030-82110-4_2}.
+DOI: \doi{10.1007/978-3-030-82110-4_2}.
 
 We acknowledge the original authors, Aldo M. Garay and João Vitor Ribeiro,
 for their contributions.

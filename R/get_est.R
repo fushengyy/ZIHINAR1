@@ -22,12 +22,10 @@
 #' }
 #'
 #' @import knitr
-#' @import coda
+#' @import rstan
+#' @importFrom coda HPDinterval as.mcmc as.mcmc.list
 #' @export
 get_est <- function(distri, stan_fit) {
-  install_if_missing("rstan")
-  install_if_missing("knitr")
-  install_if_missing("coda")
 
   if (!inherits(stan_fit, "stanfit")) {
     stop("The parameter 'stan_fit' must be a valid 'stanfit' object

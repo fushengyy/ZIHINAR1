@@ -1,8 +1,9 @@
-install_if_missing("matrixStats")
-library(matrixStats)
+#' @importFrom stats dbinom dnbinom dpois median pnbinom ppois
+#' @import matrixStats
 
 get_likelihood = function(y, alpha, rho, theta, mod_type, distri) {
   #theta = c(lambda, phi) for nb distribution
+
   if (mod_type == "zi" && distri == "poi") {
     mu = c()
     if (y[1]==0){

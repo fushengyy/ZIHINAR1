@@ -38,7 +38,7 @@
 #' Garay, A. M., Ribeiro, J. V. (2021). First-Order Integer Valued AR Processes
 #' with Zero-Inflated Innovations.
 #' In: \emph{Nonstationary Systems: Theory and Applications}, Springer.
-#' DOI: \url{https://doi.org/10.1007/978-3-030-82110-4_2}.
+#' DOI: \doi{10.1007/978-3-030-82110-4_2}.
 #'
 #' We acknowledge the original authors, Aldo M. Garay and João Vitor Ribeiro,
 #' for their contributions.
@@ -59,12 +59,10 @@
 #'
 #' @importFrom VGAM rzipois rzinegbin
 #' @importFrom actuar rztpois rztnbinom
+#' @importFrom stats runif rbinom
 #' @export
 data_simu <- function(n, alpha, rho, theta, mod_type, distri) {
   # theta = c(lambda, phi) for nb distribution
-
-  install_if_missing("VGAM")
-  install_if_missing("actuar")
 
   if (!is.numeric(n) || length(n) != 1 || n <= 0 || n != as.integer(n)) {
     stop("The parameter 'n' must be a positive integer specifying the number

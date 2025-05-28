@@ -5,7 +5,6 @@ stanfit_est <- function(distri, stanfit) {
     qoi <- c("alpha", "rho", "lambda", "phi")
   }
 
-  # Extracting summary and converting to data frame
   est_all <- as.data.frame(summary(stanfit, pars = qoi)$summary)
 
   return(est_all)
