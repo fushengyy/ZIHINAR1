@@ -44,18 +44,10 @@
 #' for their contributions.
 #'
 #' @examples
-#' \dontrun{
-#'   # Simulate 100 observations from a Zero-Inflated Poisson INAR(1) model
-#'   y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
-#'                       mod_type = "zi", distri = "poi")
-#'
-#'   # Explore the simulated data
-#'   if(!require('ZINARp')) {
-#'     install.packages('ZINARp')
-#'     library('ZINARp')
-#'    }
-#'   explore_zinarp(y_data)
-#' }
+#' # Simulate 50 observations from a Zero-Inflated Poisson INAR(1) model
+#' y_data <- data_simu(n = 50, alpha = 0.5, rho = 0.3, theta = c(5),
+#'                     mod_type = "zi", distri = "poi")
+#' head(y_data)
 #'
 #' @importFrom VGAM rzipois rzinegbin
 #' @importFrom actuar rztpois rztnbinom

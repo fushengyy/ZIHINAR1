@@ -20,12 +20,12 @@
 #' The summary is printed in a table format for easy interpretation.
 #'
 #' @examples
-#' \dontrun{
-#'   # Generate simulated data
-#'   y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+#' \donttest{
+#'   # Generate toy data
+#'   y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, theta = c(5),
 #'                       mod_type = "zi", distri = "poi")
 #'
-#'   # Fit the model using Stan
+#'   # Fit a small Stan model (may take > 5s on first compile)
 #'   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)
 #'
 #'   # Get model selection criteria
@@ -91,6 +91,6 @@ get_mod_sel <- function(y, mod_type, distri, stan_fit) {
 
   all_criteria = data.frame(eaic, ebic, dic, waic1, waic2)
   colnames(all_criteria) = c("EAIC", "EBIC", "DIC", "WAIC1", "WAIC2")
-  print(knitr::kable(all_criteria, format = "simple", digits = 4,
-                     caption = "Model Selection Criteria"))
+
+  return(all_criteria)
 }

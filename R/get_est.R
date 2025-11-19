@@ -9,12 +9,12 @@
 #' @return A summary of the parameter estimates.
 #'
 #' @examples
-#' \dontrun{
-#'   # Generate simulated data
-#'   y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+#' \donttest{
+#'   # Generate toy data
+#'   y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, theta = c(5),
 #'                       mod_type = "zi", distri = "poi")
 #'
-#'   # Fit the model using Stan
+#'   # Fit a small Stan model (may take > 5s on first compile)
 #'   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)
 #'
 #'   # Get parameter estimates from the Stan model fit
@@ -72,6 +72,5 @@ get_est <- function(distri, stan_fit) {
 
   est_result <- cbind(est_selected, hpd_df)
 
-  print(knitr::kable(est_result, format = "simple", digits = 4,
-                     caption = "Parameter Estimates"))
+  return(est_result)
 }
