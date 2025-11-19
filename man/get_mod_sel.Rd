@@ -33,12 +33,12 @@ Calculates model selection criteria such as AIC, BIC, DIC, and WAIC from a
 Stan model fit.
 }
 \examples{
-\dontrun{
-  # Generate simulated data
-  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+\donttest{
+  # Generate toy data
+  y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, theta = c(5),
                       mod_type = "zi", distri = "poi")
 
-  # Fit the model using Stan
+  # Fit a small Stan model (may take > 5s on first compile)
   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)
 
   # Get model selection criteria

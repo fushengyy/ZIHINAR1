@@ -51,12 +51,12 @@ This function fits a Zero-Inflated INAR(1) (ZI-INAR(1)) or Hurdle INAR(1)
 (H-INAR(1)) model using Stan and returns the model fit.
 }
 \examples{
-\dontrun{
-  # Generate simulated data
-  y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5),
+\donttest{
+  # Generate toy data
+  y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, theta = c(5),
                       mod_type = "zi", distri = "poi")
 
-  # Fit the model using Stan
+  # Fit the model using Stan (small config)
   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)
   print(stan_fit)
 }
