@@ -15,8 +15,8 @@ You can install ZIHINAR1 from GitHub with:
 remotes::install_github("fushengyy/ZIHINAR1")
 ```
 
-$$Available Soon$$ Or you can install the released version of
-HeckmanStan from [CRAN](https://CRAN.R-project.org) with:
+Or you can install the released version of ZIHINAR1 from
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("ZIHINAR1")
@@ -70,11 +70,24 @@ y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5, 2),
 stan_fit <- get_stanfit(mod_type = "zi", distri = "nb", y = y_data, n_pred = 5, 
                         iter = 2000, chains = 1, warmup = 500, 
                         thin = 2, seed = 42)
+#> Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
+#> using C compiler: ‘Apple clang version 17.0.0 (clang-1700.4.4.1)’
+#> using SDK: ‘MacOSX26.1.sdk’
+#> clang -arch arm64 -std=gnu2x -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS  -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -D_HAS_AUTO_PTR_ETC=0  -include '/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include    -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
+#> In file included from <built-in>:1:
+#> In file included from /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22:
+#> In file included from /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
+#> In file included from /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/Eigen/Core:19:
+#> /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:679:10: fatal error: 'cmath' file not found
+#>   679 | #include <cmath>
+#>       |          ^~~~~~~
+#> 1 error generated.
+#> make: *** [foo.o] Error 1
 #> 
 #> SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.002477 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 24.77 seconds.
+#> Chain 1: Gradient evaluation took 0.000186 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.86 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -91,41 +104,55 @@ stan_fit <- get_stanfit(mod_type = "zi", distri = "nb", y = y_data, n_pred = 5,
 #> Chain 1: Iteration: 1900 / 2000 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 3.767 seconds (Warm-up)
-#> Chain 1:                9.449 seconds (Sampling)
-#> Chain 1:                13.216 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.663 seconds (Warm-up)
+#> Chain 1:                1.76 seconds (Sampling)
+#> Chain 1:                2.423 seconds (Total)
 #> Chain 1:
 get_est(distri = "nb", stan_fit = stan_fit)
-#> 
-#> 
-#> Table: Parameter Estimates
-#> 
-#>             Mean       SD   Median     Q2.5    Q97.5     Rhat   95%_HPD_Lower   95%_HPD_Upper
-#> -------  -------  -------  -------  -------  -------  -------  --------------  --------------
-#> alpha     0.5434   0.0407   0.5450   0.4620   0.6123   1.0010          0.4605          0.6113
-#> rho       0.2573   0.1131   0.2506   0.0404   0.4742   1.0006          0.0437          0.4753
-#> lambda    4.9955   0.7772   4.9750   3.6025   6.5105   0.9987          3.6044          6.5105
-#> phi       2.2278   1.2160   1.9962   0.7745   4.9245   0.9993          0.5618          4.3624
+#>             Mean         SD    Median       Q2.5      Q97.5      Rhat
+#> alpha  0.4411611 0.05248824 0.4436986 0.32853968  0.5305426 0.9987282
+#> rho    0.2571094 0.09839077 0.2635160 0.06287134  0.4379304 1.0052384
+#> lambda 4.4170520 0.54042828 4.4392172 3.31625159  5.4534335 1.0029409
+#> phi    4.5786304 3.44632446 3.6615262 1.33904497 13.6384267 1.0013069
+#>        95%_HPD_Lower 95%_HPD_Upper
+#> alpha     0.33937746     0.5390050
+#> rho       0.05072972     0.4170477
+#> lambda    3.33134789     5.4550152
+#> phi       0.97038375    10.9572907
 get_mod_sel(y = y_data, mod_type = "zi", distri = "nb", stan_fit = stan_fit)
-#> 
-#> 
-#> Table: Model Selection Criteria
-#> 
-#>      EAIC       EBIC        DIC      WAIC1      WAIC2
-#> ---------  ---------  ---------  ---------  ---------
-#>  554.6341   565.0146   555.8627   550.0862   550.3367
+#>       EAIC     EBIC      DIC    WAIC1    WAIC2
+#> 1 514.5794 524.9599 518.5852 510.0774 510.4581
 get_pred(stan_fit = stan_fit)
+#> $summary
+#>          Mode Median IQR Min Max
+#> y_pred.1    4      5   5   0  19
+#> y_pred.2    5      5   5   0  24
+#> y_pred.3    6      6   5   0  22
+#> y_pred.4    4      5   5   0  24
+#> y_pred.5    4      5   5   0  23
 #> 
-#> 
-#> Table: Summary of Predictions
-#> 
-#>             Mode   Median   IQR   Min   Max
-#> ---------  -----  -------  ----  ----  ----
-#> y_pred.1       6      7.0     5     1    42
-#> y_pred.2       6      7.0     7     0    38
-#> y_pred.3       6      7.5     7     0    33
-#> y_pred.4       5      7.0     7     0    35
-#> y_pred.5       6      7.0     7     0    30
+#> $plots
+#> $plots[[1]]
 ```
 
 <img src="man/figures/README-example1-1.png" width="70%" style="display: block; margin: auto;" />
+
+    #> 
+    #> $plots[[2]]
+
+<img src="man/figures/README-example1-2.png" width="70%" style="display: block; margin: auto;" />
+
+    #> 
+    #> $plots[[3]]
+
+<img src="man/figures/README-example1-3.png" width="70%" style="display: block; margin: auto;" />
+
+    #> 
+    #> $plots[[4]]
+
+<img src="man/figures/README-example1-4.png" width="70%" style="display: block; margin: auto;" />
+
+    #> 
+    #> $plots[[5]]
+
+<img src="man/figures/README-example1-5.png" width="70%" style="display: block; margin: auto;" />

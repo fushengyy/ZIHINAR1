@@ -28,8 +28,8 @@ You can install ZIHINAR1 from GitHub with:
 remotes::install_github("fushengyy/ZIHINAR1")
 ```
 
-\[Available Soon\] Or you can install the released version of
-HeckmanStan from [CRAN](https://CRAN.R-project.org) with:
+Or you can install the released version of
+ZIHINAR1 from [CRAN](https://CRAN.R-project.org) with:
 
 ```r
 install.packages("ZIHINAR1")
