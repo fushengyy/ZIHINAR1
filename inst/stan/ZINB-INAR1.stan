@@ -6,7 +6,7 @@
 
 data{
   int<lower=0> T;
-  int y[T];
+  array[T] int y;
   int<lower=0> ff; // forecast
 }
 
@@ -60,7 +60,7 @@ model{
 
 generated quantities { // FOR PREDICTION
   // Generate posterior predictives
-  int y_pred_ori[ff+1];
+  array[ff+1] int y_pred_ori;
   int aa;
 
   // First P points are known
@@ -78,7 +78,7 @@ generated quantities { // FOR PREDICTION
     }
   }
 
-  int y_pred[ff];
+  array[ff] int y_pred;
 
   for (t in 1:ff) {
     y_pred[t] = y_pred_ori[t+1];
