@@ -13,16 +13,22 @@ get_stanfit(
   chains = 1,
   iter = 2000,
   warmup = iter/2,
-  seed = NA
+  seed = NA,
+  M = NULL,
+  cmp_version = c("fast", "reference"),
+  cmp_tail_tol = 1e-06,
+  tail_action = c("warn", "error"),
+  ...
 )
 }
 \arguments{
 \item{mod_type}{Character string indicating the model type.
-Use "zi" for zero-inflated
-models and "h" for hurdle models.}
+Use "zi" for zero-inflated models and "h" for hurdle models.}
 
 \item{distri}{Character string specifying the distribution.
-Options are "poi" for Poisson or "nb" for Negative Binomial.}
+Options are "poi" for Poisson, "nb" for Negative Binomial,
+"gp" for Generalized Poisson, or "cmp" for Conway-Maxwell-Poisson.
+GP and CMP innovations are supported only for zero-inflated models.}
 
 \item{y}{A numeric vector of integers representing the observed data.}
 
@@ -42,6 +48,20 @@ predictions (default is 4).}
 (default is \code{iter/2}).}
 
 \item{seed}{Numeric seed for reproducibility (default is NA).}
+
+\item{M}{CMP innovation cutoff. Defaults to the larger of 300 and
+\code{max(y)}.}
+
+\item{cmp_version}{CMP Stan implementation, either "fast" or "reference".
+Both use the same likelihood and priors. Defaults to "fast".}
+
+\item{cmp_tail_tol}{Tolerance for the CMP omitted probability mass bound.
+Defaults to 1e-6.}
+
+\item{tail_action}{Action when the CMP tail bound exceeds the tolerance.
+Use "warn" (default) or "error". Increase M and refit if flagged.}
+
+\item{...}{Additional arguments passed to \code{rstan::stan}.}
 }
 \value{
 A \code{stanfit} object containing the Stan model fit.
@@ -53,12 +73,21 @@ This function fits a Zero-Inflated INAR(1) (ZI-INAR(1)) or Hurdle INAR(1)
 \examples{
 \donttest{
   # Generate toy data
-  y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, theta = c(5),
+  y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, lambda = 5,
                       mod_type = "zi", distri = "poi")
 
   # Fit the model using Stan (small config)
   stan_fit <- get_stanfit(mod_type = "zi", distri = "poi", y = y_data)
   print(stan_fit)
+}
+
+\donttest{
+  # Simulate and fit a zero-inflated CMP-INAR(1) series
+  y_cmp <- data_simu(n = 60, alpha = 0.5, rho = 0.3, lambda = 2.5,
+                     disp = 1.2, mod_type = "zi", distri = "cmp")
+  fit_cmp <- get_stanfit(mod_type = "zi", distri = "cmp", y = y_cmp,
+                         M = 300, cmp_version = "fast")
+  print(fit_cmp)
 }
 
 }

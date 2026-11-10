@@ -4,40 +4,65 @@
 \alias{data_simu}
 \title{Simulate Time Series Data for ZI-INAR(1) or H-INAR(1) Models}
 \usage{
-data_simu(n, alpha, rho, theta, mod_type, distri)
+data_simu(n, alpha, rho, lambda, disp = NULL, mod_type, distri)
 }
 \arguments{
 \item{n}{Integer specifying the number of observations to simulate.}
 
 \item{alpha}{Numeric value between 0 and 1 representing the
-autoregressive parameter.}
+autoregressive parameter (strictly between 0 and 1).}
 
 \item{rho}{Numeric value between 0 and 1 representing the zero-inflation
 or hurdle parameter.}
 
-\item{theta}{Numeric vector of model parameters. For Poisson, it should be
-\code{theta[1] = lambda}. For Negative Binomial, it should be
-\code{theta = c(lambda, phi)}, where \code{phi} is the size parameter.}
+\item{lambda}{Numeric value (> 0) representing the location parameter (mean)
+for Poisson, or the location parameter for NB, GP, and CMP distributions.
+For CMP this is the rate parameter, not generally the mean.}
 
-\item{mod_type}{Character string indicating the model type. Use \code{"zi"}
-for zero-inflated models and \code{"h"} for hurdle models.}
+\item{disp}{Numeric value representing the dispersion parameter.
+\itemize{
+\item For \code{"nb"}: Must be positive (> 0).
+\item For \code{"gp"}: Must be strictly between 0 and 1 (0 < disp < 1).
+\item For \code{"cmp"}: The CMP parameter nu; must be positive (> 0).
+Values below 1 give overdispersed CMP innovations; 1 gives Poisson;
+values above 1 give underdispersed CMP innovations before zero inflation.
+\item For \code{"poi"}: Ignored.
+}}
 
-\item{distri}{Character string specifying the distribution. Options are
-\code{"poi"} for Poisson or \code{"nb"} for Negative Binomial.}
+\item{mod_type}{Character string indicating the model type ("zi" or "h").}
+
+\item{distri}{Character string specifying the distribution. Options are:
+\itemize{
+\item \code{"poi"} for Poisson
+\item \code{"nb"} for Negative Binomial
+\item \code{"gp"} for Generalized Poisson (Only \code{mod_type="zi"} supported)
+\item \code{"cmp"} for Conway-Maxwell-Poisson (Only \code{mod_type="zi"} supported)
+}}
 }
 \value{
 A numeric vector containing the simulated time series data.
 }
 \description{
 This function simulates time series data for Zero-Inflated INAR(1)
-(ZI-INAR(1)) or Hurdle INAR(1) (H-INAR(1)) models, using either Poisson
-or Negative Binomial distributions.
+(ZI-INAR(1)) or Hurdle INAR(1) (H-INAR(1)) models, using Poisson,
+Negative Binomial, Generalized Poisson, or
+Conway-Maxwell-Poisson (CMP) innovations.
+}
+\details{
+The first 100 observations are discarded as burn-in.
+Zero inflation applies to the innovations, not directly to the series.
+For an ordinary CMP-INAR(1) process use \code{rho = 0}.
+This simulates CMP innovations, not a CMP stationary marginal distribution.
 }
 \examples{
 # Simulate 50 observations from a Zero-Inflated Poisson INAR(1) model
-y_data <- data_simu(n = 50, alpha = 0.5, rho = 0.3, theta = c(5),
+y_data <- data_simu(n = 50, alpha = 0.5, rho = 0.3, lambda = 5,
                     mod_type = "zi", distri = "poi")
 head(y_data)
+
+# Simulate a zero-inflated CMP-INAR(1) series (disp is nu)
+y_cmp <- data_simu(n = 50, alpha = 0.5, rho = 0.3, lambda = 2.5,
+                   disp = 1.2, mod_type = "zi", distri = "cmp")
 
 }
 \references{

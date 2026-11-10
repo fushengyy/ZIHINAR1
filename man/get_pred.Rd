@@ -11,6 +11,8 @@ get_pred(stan_fit)
 }
 \value{
 A summary of the predictions and bar charts of each prediction.
+If no forecasts were requested, the summary has zero rows and the plot
+list is empty.
 }
 \description{
 Extracts predicted values from a Stan model fit.
@@ -18,7 +20,7 @@ Extracts predicted values from a Stan model fit.
 \examples{
 \donttest{
   # Generate toy data
-  y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, theta = c(5),
+  y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, lambda = 5,
                       mod_type = "zi", distri = "poi")
 
   # Fit a small Stan model (may take > 5s on first compile)
