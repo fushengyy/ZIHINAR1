@@ -4,14 +4,14 @@
 #' standard deviation, and HPD intervals.
 #'
 #' @param distri Character string specifying the distribution. Options
-#' are "poi" or "nb".
+#' are "poi", "nb", "gp", or "cmp".
 #' @param stan_fit A \code{stanfit} object returned by \code{get_stanfit}.
 #' @return A summary of the parameter estimates.
 #'
 #' @examples
 #' \donttest{
 #'   # Generate toy data
-#'   y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, theta = c(5),
+#'   y_data <- data_simu(n = 60, alpha = 0.5, rho = 0.3, lambda = 5,
 #'                       mod_type = "zi", distri = "poi")
 #'
 #'   # Fit a small Stan model (may take > 5s on first compile)
@@ -31,18 +31,19 @@ get_est <- function(distri, stan_fit) {
     stop("The parameter 'stan_fit' must be a valid 'stanfit' object
          returned by Stan.")
   }
-  if (!(distri %in% c("poi", "nb"))) {
-    stop("The parameter 'distri' must be either 'poi' for Poisson
-         or 'nb' for Negative Binomial.")
+  if (!(distri %in% c("poi", "nb", "gp", "cmp"))) {
+    stop("The parameter 'distri' must be one of: 'poi', 'nb', 'gp', 'cmp'.")
   }
 
   if (distri == "poi") {
     qoi <- c("alpha", "rho", "lambda")
+  } else if (distri == "cmp") {
+    qoi <- c("alpha", "rho", "lambda", "nu")
   } else {
     qoi <- c("alpha", "rho", "lambda", "phi")
   }
 
-  est_all <- summary(stan_fit, pars = qoi)$summary
+  est_all <- rstan::summary(stan_fit, pars = qoi)$summary
   selected_columns <- c("mean", "sd", "2.5%", "50%", "97.5%", "Rhat")
   est_selected <- est_all[, selected_columns]
 
