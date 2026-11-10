@@ -5,7 +5,8 @@ The First-order Integer-valued Autoregressive (INAR(1)) model with
 zero-inflated (ZI-INAR(1)) and hurdle (H-INAR(1)) innovations is widely
 used in studying integer-valued time-series data, such as crime count
 and heatwave frequency. This work implemented the INAR(1) models in
-Stan.
+Stan. The package now also supports zero-inflated INAR(1) models with
+Conway-Maxwell-Poisson (CMP) innovations.
 
 ## Installation
 
@@ -29,33 +30,53 @@ The package contains main function named get_stanfit().
 ``` r
 stan_fit <- get_stanfit(mod_type, distri, y, n_pred = 4,
                         thin = 2, chains = 1, iter = 2000, warmup = iter/2,
-                        seed = NA)
+                        seed = NA, M = NULL,
+                        cmp_version = c("fast", "reference"),
+                        cmp_tail_tol = 1e-6, tail_action = c("warn", "error"), ...)
 ```
 
-- mod_type: Character string indicating the model type. Use “zi” for
-  zero-inflated models and “h” for hurdle models.
+- `mod_type`: Character string indicating the model type. Use `"zi"` for
+  zero-inflated models and `"h"` for hurdle models.
 
-- distri: Character string specifying the distribution. Options are
-  “poi” for Poisson or “nb” for Negative Binomial.
+- `distri`: Innovation distribution. Options:
 
-- y: A numeric vector of integers representing the observed data.
+  - `"poi"`: Poisson
+  - `"nb"`: Negative Binomial
+  - `"gp"`: Generalized Poisson (ZI only)
+  - `"cmp"`: Conway-Maxwell-Poisson (ZI only)
 
-- n_pred: Integer specifying the number of time points for future
+- `y`: A numeric vector of integers representing the observed data.
+
+- `n_pred`: Integer specifying the number of time points for future
   predictions (default is 4).
 
-- thin: Integer indicating the thinning interval for Stan sampling
+- `thin`: Integer indicating the thinning interval for Stan sampling
   (default is 2).
 
-- chains: Integer specifying the number of Markov chains to run (default
-  is 1).
+- `chains`: Integer specifying the number of Markov chains to run
+  (default is 1).
 
-- iter: Integer specifying the total number of iterations per chain
+- `iter`: Integer specifying the total number of iterations per chain
   (default is 2000).
 
-- warmup: Integer specifying the number of warmup iterations per chain
-  (default is iter/2).
+- `warmup`: Integer specifying the number of warmup iterations per chain
+  (default is `iter`/2).
 
-- seed: Numeric seed for reproducibility (default is NA).
+- `seed`: Numeric seed for reproducibility (default is NA).
+
+- `M`: CMP innovation cutoff. The default is the larger of 300 and
+  `max(y)`.
+
+- `cmp_version`: CMP Stan implementation, either `"fast"` (default) or
+  `"reference"`. Both use the same likelihood and priors.
+
+- `cmp_tail_tol`: Tolerance for the CMP omitted probability mass bound
+  (default is `1e-6`).
+
+- `tail_action`: Use `"warn"` (default) or `"error"` when the CMP tail
+  bound exceeds the tolerance. Increase `M` and refit if this happens.
+
+- `...`: Additional arguments passed to `rstan::stan()`.
 
 ## Example
 
@@ -65,29 +86,16 @@ distribution.
 
 ``` r
 library(ZIHINAR1)
-y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, theta = c(5, 2), 
+y_data <- data_simu(n = 100, alpha = 0.5, rho = 0.3, lambda = 5, disp = 2, 
                     mod_type = "zi", distri = "nb")
 stan_fit <- get_stanfit(mod_type = "zi", distri = "nb", y = y_data, n_pred = 5, 
                         iter = 2000, chains = 1, warmup = 500, 
                         thin = 2, seed = 42)
-#> Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-#> using C compiler: ‘Apple clang version 17.0.0 (clang-1700.4.4.1)’
-#> using SDK: ‘MacOSX26.1.sdk’
-#> clang -arch arm64 -std=gnu2x -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppParallel/include/"  -I"/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS  -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -D_HAS_AUTO_PTR_ETC=0  -include '/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   -I/opt/R/arm64/include    -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-#> In file included from <built-in>:1:
-#> In file included from /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22:
-#> In file included from /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/Eigen/Dense:1:
-#> In file included from /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/Eigen/Core:19:
-#> /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:679:10: fatal error: 'cmath' file not found
-#>   679 | #include <cmath>
-#>       |          ^~~~~~~
-#> 1 error generated.
-#> make: *** [foo.o] Error 1
 #> 
 #> SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000186 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.86 seconds.
+#> Chain 1: Gradient evaluation took 0.000174 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.74 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -104,55 +112,66 @@ stan_fit <- get_stanfit(mod_type = "zi", distri = "nb", y = y_data, n_pred = 5,
 #> Chain 1: Iteration: 1900 / 2000 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.663 seconds (Warm-up)
-#> Chain 1:                1.76 seconds (Sampling)
-#> Chain 1:                2.423 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.656 seconds (Warm-up)
+#> Chain 1:                1.818 seconds (Sampling)
+#> Chain 1:                2.474 seconds (Total)
 #> Chain 1:
 get_est(distri = "nb", stan_fit = stan_fit)
-#>             Mean         SD    Median       Q2.5      Q97.5      Rhat
-#> alpha  0.4411611 0.05248824 0.4436986 0.32853968  0.5305426 0.9987282
-#> rho    0.2571094 0.09839077 0.2635160 0.06287134  0.4379304 1.0052384
-#> lambda 4.4170520 0.54042828 4.4392172 3.31625159  5.4534335 1.0029409
-#> phi    4.5786304 3.44632446 3.6615262 1.33904497 13.6384267 1.0013069
-#>        95%_HPD_Lower 95%_HPD_Upper
-#> alpha     0.33937746     0.5390050
-#> rho       0.05072972     0.4170477
-#> lambda    3.33134789     5.4550152
-#> phi       0.97038375    10.9572907
+#>             Mean         SD    Median       Q2.5     Q97.5      Rhat 95%_HPD_Lower 95%_HPD_Upper
+#> alpha  0.4698743 0.05105897 0.4761154 0.36081446 0.5589632 0.9999792   0.361243245     0.5591202
+#> rho    0.2258471 0.12798091 0.2228731 0.02060225 0.4858715 1.0024684   0.005271078     0.4496370
+#> lambda 4.4128266 0.74546675 4.3652389 3.12326655 6.0788370 1.0063409   2.824085820     5.7147138
+#> phi    1.5557630 0.74007545 1.3769369 0.64861912 3.4650565 1.0020000   0.500559232     2.9273579
 get_mod_sel(y = y_data, mod_type = "zi", distri = "nb", stan_fit = stan_fit)
-#>       EAIC     EBIC      DIC    WAIC1    WAIC2
-#> 1 514.5794 524.9599 518.5852 510.0774 510.4581
+#>      EAIC     EBIC      DIC    WAIC1    WAIC2
+#> 1 531.541 541.9215 526.9322 526.6891 526.9263
 get_pred(stan_fit = stan_fit)
 #> $summary
 #>          Mode Median IQR Min Max
-#> y_pred.1    4      5   5   0  19
-#> y_pred.2    5      5   5   0  24
-#> y_pred.3    6      6   5   0  22
-#> y_pred.4    4      5   5   0  24
-#> y_pred.5    4      5   5   0  23
+#> y_pred.1    6      7   5   1  36
+#> y_pred.2    4      6   6   0  33
+#> y_pred.3    3      6   6   0  43
+#> y_pred.4    3      6   6   0  34
+#> y_pred.5    4      5   6   0  27
 #> 
 #> $plots
 #> $plots[[1]]
 ```
 
-<img src="man/figures/README-example1-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example1-1.png" alt="" width="70%" style="display: block; margin: auto;" />
 
     #> 
     #> $plots[[2]]
 
-<img src="man/figures/README-example1-2.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example1-2.png" alt="" width="70%" style="display: block; margin: auto;" />
 
     #> 
     #> $plots[[3]]
 
-<img src="man/figures/README-example1-3.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example1-3.png" alt="" width="70%" style="display: block; margin: auto;" />
 
     #> 
     #> $plots[[4]]
 
-<img src="man/figures/README-example1-4.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example1-4.png" alt="" width="70%" style="display: block; margin: auto;" />
 
     #> 
     #> $plots[[5]]
 
-<img src="man/figures/README-example1-5.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example1-5.png" alt="" width="70%" style="display: block; margin: auto;" />
+
+## Example with CMP innovations
+
+For CMP, `disp` in `data_simu()` is the dispersion parameter `nu`
+reported by `get_est()`. The parameter `lambda` is the CMP rate.
+
+``` r
+set.seed(42)
+y_cmp <- data_simu(n = 100, alpha = 0.5, rho = 0.3, lambda = 2.5, disp = 1.2,
+                   mod_type = "zi", distri = "cmp")
+fit_cmp <- get_stanfit(mod_type = "zi", distri = "cmp", y = y_cmp, n_pred = 5,
+                       iter = 2000, chains = 4, warmup = 1000, seed = 42)
+get_est(distri = "cmp", stan_fit = fit_cmp)
+get_mod_sel(y = y_cmp, mod_type = "zi", distri = "cmp", stan_fit = fit_cmp)
+get_pred(stan_fit = fit_cmp)
+```
